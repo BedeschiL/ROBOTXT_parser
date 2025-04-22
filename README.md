@@ -2,10 +2,10 @@
   <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-markdown-open.svg" width="100" />
 </p>
 <p align="center">
-    <h1 align="center">ROBOT_TXT</h1>
+    <h1 align="center">ROBOTXT Parser</h1>
 </p>
 <p align="center">
-    <em><code>► INSERT-TEXT-HERE</code></em>
+    <em><code>Python library for fetching, parsing, and evaluating robots.txt rules for web crawlers</code></em>
 </p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/BedeschiL/robot_txt?style=default&color=0080ff" alt="license">
@@ -37,13 +37,17 @@
 
 ##  Overview
 
-<code>► INSERT-TEXT-HERE</code>
+A lightweight Python package that retrieves a site's robots.txt file, parses directives (User-agent, Allow, Disallow, Crawl-delay, Sitemap), and evaluates crawl permissions according to Google guidelines.
 
 ---
 
 ##  Features
 
-<code>► INSERT-TEXT-HERE</code>
+- Fetch and cache robots.txt content
+- Extract crawl-delay settings per user-agent
+- List sitemap URLs declared in robots.txt
+- Determine allowed and disallowed paths for specified user-agents
+- Utility to test path access rules
 
 ---
 
@@ -63,8 +67,8 @@
 
 | File                                                                                    | Summary                         |
 | ---                                                                                     | ---                             |
-| [requirements.txt](https://github.com/BedeschiL/robot_txt/blob/master/requirements.txt) | <code>► INSERT-TEXT-HERE</code> |
-| [main.py](https://github.com/BedeschiL/robot_txt/blob/master/main.py)                   | <code>► INSERT-TEXT-HERE</code> |
+| [requirements.txt](https://github.com/BedeschiL/ROBOTXT_parser/blob/master/requirements.txt) | Lists Python dependencies: requests, pytest |
+| [main.py](https://github.com/BedeschiL/ROBOTXT_parser/blob/master/main.py)                   | Implements RobotParser class and CLI entry point |
 
 </details>
 
@@ -84,7 +88,7 @@
 
 Ensure you have the following dependencies installed on your system:
 
-* **Python**: `version x.y.z`
+* **Python**: `>=3.7`
 
 ###  Installation
 
@@ -171,13 +175,15 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 
 ##  License
 
-This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
+This project is protected under the [MIT License](LICENSE). For more details, see the [LICENSE](LICENSE) file.
 
 ---
 
 ##  Acknowledgments
 
-- List any resources, contributors, inspiration, etc. here.
+- Developed by BedeschiL with inspiration from Google robots.txt guidelines
+- Uses the Requests library: https://docs.python-requests.org/
+- Regex parsing adapted from standard robots.txt parsing examples
 
 [**Return**](#-quick-links)
 
