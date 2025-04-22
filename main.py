@@ -95,7 +95,7 @@ class RobotParser:
             logging.info(f"Trying to get robot from url: {url}/robots.txt")
             response = requests.get(url + "/robots.txt", verify=True, timeout=10)
             response.encoding = "utf-8"
-            if 200 > response.status_code >= 300:
+            if not (200 <= response.status_code < 300):
                 return f"Error: HTTP Status Code {response.status_code}"
             return response.text
 
@@ -168,15 +168,8 @@ class RobotParser:
             return dict_blocks
 
         elif action == "sitemaps":
-            sitemap = []
-            sites = re.findall(
-                r"(?i)(?<=sitemap: )https?:/{2}w[0-9a-zA-Z()@:%_+.~#?&/=]*\.[a-z]{1,4}$",
-                robots_txt,
-                re.MULTILINE,
-            )
-
-            sitemap.extend(sites)
-            return sitemap
+            # Flexible sitemap URL extraction
+            return re.findall(r'(?im)^sitemap:\s*(https?://\S+)', robots_txt)
 
         elif action == "user_agent":
             lines = robots_txt.split("\n")
@@ -376,26 +369,26 @@ class RobotParser:
         matched_rules = []
         for rule in rules:
             rule = parse.unquote(rule)
+            # End-of-line anchor support
+            if rule.endswith('$'):
+                pattern = '^' + re.escape(rule[:-1]) + '$'
+                if re.match(pattern, path):
+                    matched_rules.append({"status": "allowed", "rule": rule, "len": len(rule)})
+                continue
             if "*" in rule:
                 rule_regex = rule.replace("*", reg_str)
                 rule_regex = "^" + rule_regex
                 match = re.match(rule_regex, path)
                 if match is not None:
-                    matched_rules.append(
-                        {"status": "allowed", "rule": rule, "len": len(rule)}
-                    )
+                    matched_rules.append({"status": "allowed", "rule": rule, "len": len(rule)})
             else:
                 if rule == path:
-                    matched_rules.append(
-                        {"status": "allowed", "rule": rule, "len": len(rule)}
-                    )
+                    matched_rules.append({"status": "allowed", "rule": rule, "len": len(rule)})
                 elif rule == "/":
                     rule_regex = "^" + rule + reg_str
                     match = re.match(rule_regex, path)
                     if match is not None:
-                        matched_rules.append(
-                            {"status": "allowed", "rule": rule, "len": len(rule)}
-                        )
+                        matched_rules.append({"status": "allowed", "rule": rule, "len": len(rule)})
         return matched_rules
 
     @staticmethod
@@ -416,25 +409,25 @@ class RobotParser:
         regex_end_with_slash = r"^(.*?)/$"
         matched_rules = []
         for rule in rules:
+            # End-of-line anchor support
+            if rule.endswith('$'):
+                pattern = '^' + re.escape(rule[:-1]) + '$'
+                if re.match(pattern, path):
+                    matched_rules.append({"status": "disallow", "rule": rule, "len": len(rule)})
+                continue
             if "*" in rule:
                 rule_regex = f"^{rule.replace('*', '')}"
                 match = re.match(rule_regex, path)
                 if match is not None:
-                    matched_rules.append(
-                        {"status": "disallow", "rule": rule, "len": len(rule)}
-                    )
+                    matched_rules.append({"status": "disallow", "rule": rule, "len": len(rule)})
             else:
                 if rule == path:
-                    matched_rules.append(
-                        {"status": "disallow", "rule": rule, "len": len(rule)}
-                    )
+                    matched_rules.append({"status": "disallow", "rule": rule, "len": len(rule)})
                 elif re.match(regex_end_with_slash, rule) is not None:
                     rule_regex = f"^{rule}{reg_str}"
                     match = re.match(rule_regex, path)
                     if match is not None:
-                        matched_rules.append(
-                            {"status": "disallow", "rule": rule, "len": len(rule)}
-                        )
+                        matched_rules.append({"status": "disallow", "rule": rule, "len": len(rule)})
 
         return matched_rules
 
