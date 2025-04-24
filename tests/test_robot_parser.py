@@ -1,5 +1,6 @@
 import pytest
-from robotxt_parser import RobotParser, RobotException
+from src.robotxt_parser.parser.robot_parser import RobotParser
+from src.robotxt_parser.parser.exceptions import RobotException
 
 def test_robot_parser_initialization():
     parser = RobotParser()
@@ -13,8 +14,14 @@ def test_set_url():
 
 def test_invalid_url():
     parser = RobotParser()
-    with pytest.raises(Exception):
+    with pytest.raises(RobotException):
         parser.set_url(None)
+    
+    with pytest.raises(RobotException):
+        parser.set_url("")
+        
+    with pytest.raises(RobotException):
+        parser.set_url(123)  # type: ignore
 
 def test_parse_crawl_delay():
     parser = RobotParser()
@@ -22,7 +29,7 @@ def test_parse_crawl_delay():
     User-agent: *
     Crawl-delay: 10
     
-    User-agent: Googlebot
+    User-agent: googlebot
     Crawl-delay: 5
     """
     result = parser.parse("https://example.com", "crawl_delay")
@@ -36,6 +43,7 @@ def test_parse_sitemaps():
     Sitemap: https://example.com/sitemap-images.xml
     """
     result = parser.parse("https://example.com", "sitemaps")
+    assert isinstance(result, list)
     assert len(result) == 2
     assert "https://example.com/sitemap.xml" in result
     assert "https://example.com/sitemap-images.xml" in result

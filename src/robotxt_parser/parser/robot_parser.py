@@ -25,10 +25,21 @@ class RobotParser:
         
         Args:
             url (str): The URL to set
+            
+        Raises:
+            RobotException: If the URL is invalid or None
         """
-        if url is not None:
-            self._url = normalize_url(url)
-            self.robot_content = None
+        if url is None:
+            raise RobotException("URL cannot be None")
+            
+        if not isinstance(url, str):
+            raise RobotException("URL must be a string")
+            
+        if not url.strip():
+            raise RobotException("URL cannot be empty")
+            
+        self._url = normalize_url(url)
+        self.robot_content = None
 
     @property
     def url(self) -> str:
@@ -71,7 +82,8 @@ class RobotParser:
             logging.error(f"Error fetching robots.txt: {e}")
             return None
 
-    def parse(self, url: str, action: str) -> Optional[Union[Dict, List[str]]]:
+    def parse(self, url: str, action: str) -> None | dict[str, dict[str, str | None]] | list[str] | list[
+        dict[str, dict[str, list[str]]]]:
         """
         Parse robots.txt content for specific actions.
         
@@ -127,7 +139,7 @@ class RobotParser:
         if not self.robot_content:
             return []
             
-        return re.findall(r'(?im)^sitemap:\s*(https?://\S+)', self.robot_content)
+        return re.findall(r'(?im)^\s*sitemap:\s*(https?://\S+)', self.robot_content)
 
     def _parse_user_agent(self) -> List[Dict[str, Dict[str, List[str]]]]:
         """Parse user-agent directives."""

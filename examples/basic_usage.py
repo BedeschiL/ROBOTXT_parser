@@ -3,7 +3,7 @@
 Basic example of using the RobotXT Parser.
 """
 
-from robotxt_parser import RobotParser
+from src.robotxt_parser import RobotParser
 
 def main():
     # Initialize the parser
