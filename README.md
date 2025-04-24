@@ -1,190 +1,206 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-markdown-open.svg" width="100" />
-</p>
-<p align="center">
-    <h1 align="center">ROBOTXT Parser</h1>
-</p>
-<p align="center">
-    <em><code>Python library for fetching, parsing, and evaluating robots.txt rules for web crawlers</code></em>
-</p>
-<p align="center">
-	<img src="https://img.shields.io/github/license/BedeschiL/robot_txt?style=default&color=0080ff" alt="license">
-	<img src="https://img.shields.io/github/last-commit/BedeschiL/robot_txt?style=default&color=0080ff" alt="last-commit">
-	<img src="https://img.shields.io/github/languages/top/BedeschiL/robot_txt?style=default&color=0080ff" alt="repo-top-language">
-	<img src="https://img.shields.io/github/languages/count/BedeschiL/robot_txt?style=default&color=0080ff" alt="repo-language-count">
-<p>
-<p align="center">
-	<!-- default option, no dependency badges. -->
-</p>
-<hr>
+# RobotXT Parser
 
-##  Quick Links
+[![Python Version](https://img.shields.io/badge/python-3.7%2B-blue)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Type Checking](https://img.shields.io/badge/type%20checking-mypy-blue)](https://github.com/python/mypy)
 
-> - [ Overview](#-overview)
-> - [ Features](#-features)
-> - [ Repository Structure](#-repository-structure)
-> - [ Modules](#-modules)
-> - [ Getting Started](#-getting-started)
->   - [ Installation](#-installation)
->   - [ Running robot_txt](#-running-robot_txt)
->   - [ Tests](#-tests)
-> - [ Project Roadmap](#-project-roadmap)
-> - [ Contributing](#-contributing)
-> - [ License](#-license)
-> - [ Acknowledgments](#-acknowledgments)
+A robust Python library for parsing and analyzing robots.txt files according to Google's guidelines. This library provides a simple interface for web crawlers to check if they are allowed to access specific paths on a website.
 
----
+## Features
 
-##  Overview
+- 🚀 Fast and efficient robots.txt parsing
+- 🔒 Follows Google's robots.txt specification
+- 🌐 Support for both HTTP and HTTPS
+- 📊 Comprehensive rule evaluation
+- 🔄 Built-in caching mechanism
+- 📝 Detailed logging
+- 🧪 Extensive test coverage
+- 🔍 Support for wildcard patterns
+- ⏱️ Crawl delay parsing
+- 🗺️ Sitemap extraction
 
-A lightweight Python package that retrieves a site's robots.txt file, parses directives (User-agent, Allow, Disallow, Crawl-delay, Sitemap), and evaluates crawl permissions according to Google guidelines.
+## Installation
 
----
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/robotxt-parser.git
+cd robotxt-parser
 
-##  Features
+# Create and activate virtual environment (optional but recommended)
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-- Fetch and cache robots.txt content
-- Extract crawl-delay settings per user-agent
-- List sitemap URLs declared in robots.txt
-- Determine allowed and disallowed paths for specified user-agents
-- Utility to test path access rules
-
----
-
-##  Repository Structure
-
-```sh
-└── robot_txt/
-    ├── main.py
-    └── requirements.txt
+# Install the package
+pip install -e .
 ```
 
----
+## Quick Start
 
-##  Modules
+### As a Library
 
-<details closed><summary>.</summary>
+```python
+from robotxt_parser import RobotParser
 
-| File                                                                                    | Summary                         |
-| ---                                                                                     | ---                             |
-| [requirements.txt](https://github.com/BedeschiL/ROBOTXT_parser/blob/master/requirements.txt) | Lists Python dependencies: requests, pytest |
-| [main.py](https://github.com/BedeschiL/ROBOTXT_parser/blob/master/main.py)                   | Implements RobotParser class and CLI entry point |
+# Initialize parser
+parser = RobotParser()
 
-</details>
+# Set the URL to analyze
+url = "https://example.com"
+parser.set_url(url)
 
-<details closed><summary>.idea</summary>
+# Check if a path is allowed for a specific user-agent
+user_agent = "MyBot"
+path = "/some/path"
+is_allowed = parser.check_for_rule(user_agent, path)
+print(f"Path {path} is {'allowed' if is_allowed else 'disallowed'} for {user_agent}")
 
-| File                                                                              | Summary                         |
-| ---                                                                               | ---                             |
-| [.gitignore](https://github.com/BedeschiL/robot_txt/blob/master/.idea/.gitignore) | <code>► INSERT-TEXT-HERE</code> |
+# Get all sitemaps
+sitemaps = parser.get_sitemaps()
+print("Sitemaps:", sitemaps)
 
-</details>
-
----
-
-##  Getting Started
-
-***Requirements***
-
-Ensure you have the following dependencies installed on your system:
-
-* **Python**: `>=3.7`
-
-###  Installation
-
-1. Clone the robot_txt repository:
-
-```sh
-git clone https://github.com/BedeschiL/robot_txt
+# Get crawl delay
+delay = parser.get_crawl_delay(user_agent)
+print(f"Crawl delay for {user_agent}: {delay}")
 ```
 
-2. Change to the project directory:
+### As a Command-Line Tool
 
-```sh
-cd robot_txt
+```bash
+# Check if a path is allowed
+robotxt https://example.com --user-agent MyBot --path /some/path
+
+# Get all sitemaps
+robotxt https://example.com --action sitemaps
+
+# Get crawl delay
+robotxt https://example.com --action crawl_delay --user-agent MyBot
+
+# Enable verbose output
+robotxt https://example.com --verbose
 ```
 
-3. Install the dependencies:
+## API Reference
 
-```sh
+### RobotParser
+
+Main class for parsing and evaluating robots.txt files.
+
+#### Methods
+
+- `set_url(url: str) -> None`
+  - Set the URL to analyze
+  - Args:
+    - url: The URL to set
+
+- `check_for_rule(user_agent: str, path: str) -> bool`
+  - Check if a path is allowed for a specific user-agent
+  - Args:
+    - user_agent: The user-agent to check
+    - path: The path to check
+  - Returns: True if path is allowed, False otherwise
+
+- `get_sitemaps() -> List[str]`
+  - Get all sitemap URLs from robots.txt
+  - Returns: List of sitemap URLs
+
+- `get_crawl_delay(user_agent: str) -> Optional[float]`
+  - Get crawl delay for a specific user-agent
+  - Args:
+    - user_agent: The user-agent to get crawl delay for
+  - Returns: Crawl delay in seconds or None if not specified
+
+- `parse(url: str, action: str) -> Optional[Union[Dict, List[str]]]`
+  - Parse robots.txt content for specific actions
+  - Args:
+    - url: The URL to parse
+    - action: The action to perform ('crawl_delay', 'sitemaps', 'user_agent')
+  - Returns: Parsed results based on action
+
+## Project Structure
+
+```
+robotxt_parser/
+├── src/
+│   └── robotxt_parser/
+│       ├── parser/
+│       │   ├── __init__.py
+│       │   ├── robot_parser.py
+│       │   └── exceptions.py
+│       ├── utils/
+│       │   ├── __init__.py
+│       │   └── url_utils.py
+│       ├── cli/
+│       │   ├── __init__.py
+│       │   └── main.py
+│       └── __init__.py
+├── tests/
+│   ├── __init__.py
+│   └── test_robot_parser.py
+├── examples/
+│   └── basic_usage.py
+├── README.md
+├── setup.py
+└── requirements.txt
+```
+
+## Development
+
+### Setup Development Environment
+
+```bash
+# Install development dependencies
 pip install -r requirements.txt
+
+# Install pre-commit hooks
+pre-commit install
 ```
 
-###  Running robot_txt
+### Running Tests
 
-Use the following command to run robot_txt:
-
-```sh
-python main.py
-```
-
-###  Tests
-
-To execute tests, run:
-
-```sh
+```bash
+# Run all tests
 pytest
+
+# Run tests with coverage
+pytest --cov=robotxt_parser
+
+# Run tests with verbose output
+pytest -v
 ```
 
----
+### Code Quality
 
-##  Project Roadmap
+```bash
+# Format code
+black .
 
-- [X] `► INSERT-TASK-1`
-- [ ] `► INSERT-TASK-2`
-- [ ] `► ...`
+# Sort imports
+isort .
 
----
+# Type checking
+mypy .
 
-##  Contributing
+# Linting
+flake8
+```
 
-Contributions are welcome! Here are several ways you can contribute:
+## Contributing
 
-- **[Submit Pull Requests](https://github/BedeschiL/robot_txt/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
-- **[Join the Discussions](https://github/BedeschiL/robot_txt/discussions)**: Share your insights, provide feedback, or ask questions.
-- **[Report Issues](https://github/BedeschiL/robot_txt/issues)**: Submit bugs found or log feature requests for Robot_txt.
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-<details closed>
-    <summary>Contributing Guidelines</summary>
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-1. **Fork the Repository**: Start by forking the project repository to your GitHub account.
-2. **Clone Locally**: Clone the forked repository to your local machine using a Git client.
-   ```sh
-   git clone https://github.com/BedeschiL/robot_txt
-   ```
-3. **Create a New Branch**: Always work on a new branch, giving it a descriptive name.
-   ```sh
-   git checkout -b new-feature-x
-   ```
-4. **Make Your Changes**: Develop and test your changes locally.
-5. **Commit Your Changes**: Commit with a clear message describing your updates.
-   ```sh
-   git commit -m 'Implemented new feature x.'
-   ```
-6. **Push to GitHub**: Push the changes to your forked repository.
-   ```sh
-   git push origin new-feature-x
-   ```
-7. **Submit a Pull Request**: Create a PR against the original project repository. Clearly describe the changes and their motivations.
+## License
 
-Once your PR is reviewed and approved, it will be merged into the main branch.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-</details>
+## Acknowledgments
 
----
-
-##  License
-
-This project is protected under the [MIT License](LICENSE). For more details, see the [LICENSE](LICENSE) file.
-
----
-
-##  Acknowledgments
-
-- Developed by BedeschiL with inspiration from Google robots.txt guidelines
-- Uses the Requests library: https://docs.python-requests.org/
-- Regex parsing adapted from standard robots.txt parsing examples
-
-[**Return**](#-quick-links)
-
----
+- Built following [Google's robots.txt specifications](https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt)
+- Inspired by the Python community's best practices
+- Uses the [Requests](https://docs.python-requests.org/) library for HTTP requests
